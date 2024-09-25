@@ -5,7 +5,7 @@ from flask_moment import Moment
 from datetime import datetime
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, ValidationError
 from wtforms.validators import DataRequired, Email
 
 app = Flask(__name__)
@@ -15,9 +15,18 @@ moment = Moment(app)
 
 app.config['SECRET_KEY'] = 'hard to guess string'
 
+def contains_utoronto(string):
+    def _contains_utoronto(form, field):
+        if string not in field.data:
+            raise ValidationError(f"The email must be a '{string}' email.")
+    return _contains_utoronto
+
 class FullForm(FlaskForm):
     name = StringField('What is your name?', validators = [DataRequired()])
-    email = StringField('What is your UofT Email address?', validators = [Email(granular_message = True)])
+    email = StringField('What is your UofT Email address?', validators = [
+                                                                DataRequired(),
+                                                                Email(granular_message = True),
+                                                                contains_utoronto('utoronto')])
     submit = SubmitField('Submit')
 
 @app.route('/', methods = ['GET', 'POST'])
