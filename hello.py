@@ -5,7 +5,7 @@ from flask_moment import Moment
 from datetime import datetime
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, ValidationError
+from wtforms import StringField, SubmitField, EmailField, ValidationError
 from wtforms.validators import DataRequired, Email
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ def contains_utoronto(string):
 
 class FullForm(FlaskForm):
     name = StringField('What is your name?', validators = [DataRequired()])
-    email = StringField('What is your UofT Email address?', validators = [
+    email = EmailField('What is your UofT Email address?', validators = [
                                                                 DataRequired(),
                                                                 Email(granular_message = True),
                                                                 contains_utoronto('utoronto')])
